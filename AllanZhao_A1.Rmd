@@ -1,0 +1,647 @@
+---
+title: "AllanZhao_A1"
+author: "Allan Zhao"
+date: "September 28, 2021"
+output: html_document
+---
+
+## Setup
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(plotly)
+```
+
+## Loading PG&E data from CSVs
+```{r}
+## Loading 2021 electricity files
+pge_21_q1_elec <- read_csv("PG&E/PGE_2021_Q1_ElectricUsageByZip.csv")
+pge_21_q2_elec <- read_csv("PG&E/PGE_2021_Q2_ElectricUsageByZip.csv")
+
+## Loading 2020 electricity files
+pge_20_q1_elec <- read_csv("PG&E/PGE_2020_Q1_ElectricUsageByZip.csv")
+pge_20_q2_elec <- read_csv("PG&E/PGE_2020_Q2_ElectricUsageByZip.csv")
+pge_20_q3_elec <- read_csv("PG&E/PGE_2020_Q3_ElectricUsageByZip.csv")
+pge_20_q4_elec <- read_csv("PG&E/PGE_2020_Q4_ElectricUsageByZip.csv")
+
+## Loading 2019 electricity files
+pge_19_q1_elec <- read_csv("PG&E/PGE_2019_Q1_ElectricUsageByZip.csv")
+pge_19_q2_elec <- read_csv("PG&E/PGE_2019_Q2_ElectricUsageByZip.csv")
+pge_19_q3_elec <- read_csv("PG&E/PGE_2019_Q3_ElectricUsageByZip.csv")
+pge_19_q4_elec <- read_csv("PG&E/PGE_2019_Q4_ElectricUsageByZip.csv")
+
+## Loading 2018 electricity files
+pge_18_q1_elec <- read_csv("PG&E/PGE_2018_Q1_ElectricUsageByZip.csv")
+pge_18_q2_elec <- read_csv("PG&E/PGE_2018_Q2_ElectricUsageByZip.csv")
+pge_18_q3_elec <- read_csv("PG&E/PGE_2018_Q3_ElectricUsageByZip.csv")
+pge_18_q4_elec <- read_csv("PG&E/PGE_2018_Q4_ElectricUsageByZip.csv")
+
+## Loading 2017 electricity files
+pge_17_q1_elec <- read_csv("PG&E/PGE_2017_Q1_ElectricUsageByZip.csv")
+pge_17_q2_elec <- read_csv("PG&E/PGE_2017_Q2_ElectricUsageByZip.csv")
+pge_17_q3_elec <- read_csv("PG&E/PGE_2017_Q3_ElectricUsageByZip.csv")
+pge_17_q4_elec <- read_csv("PG&E/PGE_2017_Q4_ElectricUsageByZip.csv")
+
+
+#####################################################################
+#Loading 2021 gas files
+pge_21_q1_gas <- read_csv("PG&E/PGE_2021_Q1_GasUsageByZip.csv")
+pge_21_q2_gas <- read_csv("PG&E/PGE_2021_Q2_GasUsageByZip.csv")
+
+## Loading 2020 electricity files
+pge_20_q1_gas <- read_csv("PG&E/PGE_2020_Q1_GasUsageByZip.csv")
+pge_20_q2_gas <- read_csv("PG&E/PGE_2020_Q2_GasUsageByZip.csv")
+pge_20_q3_gas <- read_csv("PG&E/PGE_2020_Q3_GasUsageByZip.csv")
+pge_20_q4_gas <- read_csv("PG&E/PGE_2020_Q4_GasUsageByZip.csv")
+
+## Loading 2019 electricity files
+pge_19_q1_gas <- read_csv("PG&E/PGE_2019_Q1_GasUsageByZip.csv")
+pge_19_q2_gas <- read_csv("PG&E/PGE_2019_Q2_GasUsageByZip.csv")
+pge_19_q3_gas <- read_csv("PG&E/PGE_2019_Q3_GasUsageByZip.csv")
+pge_19_q4_gas <- read_csv("PG&E/PGE_2019_Q4_GasUsageByZip.csv")
+
+## Loading 2018 electricity files
+pge_18_q1_gas <- read_csv("PG&E/PGE_2018_Q1_GasUsageByZip.csv")
+pge_18_q2_gas <- read_csv("PG&E/PGE_2018_Q2_GasUsageByZip.csv")
+pge_18_q3_gas <- read_csv("PG&E/PGE_2018_Q3_GasUsageByZip.csv")
+pge_18_q4_gas <- read_csv("PG&E/PGE_2018_Q4_GasUsageByZip.csv")
+
+## Loading 2017 electricity files
+pge_17_q1_gas <- read_csv("PG&E/PGE_2017_Q1_GasUsageByZip.csv")
+pge_17_q2_gas <- read_csv("PG&E/PGE_2017_Q2_GasUsageByZip.csv")
+pge_17_q3_gas <- read_csv("PG&E/PGE_2017_Q3_GasUsageByZip.csv")
+pge_17_q4_gas <- read_csv("PG&E/PGE_2017_Q4_GasUsageByZip.csv")
+
+```
+
+## Saving data into RDS files by year
+```{r}
+# 2021 Electric
+year <- 2021
+quarters <- 1:2
+type <- "Electric"
+
+pge_21_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_21_elec <- rbind(pge_21_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_21_elec, "pge_21_elec.rds")
+}
+```
+
+```{r}
+# 2020 Electric
+year <- 2020
+quarters <- 1:4
+type <- "Electric"
+
+pge_20_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_20_elec <- rbind(pge_20_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_20_elec, "pge_20_elec.rds")
+}
+```
+
+```{r}
+# 2019 Electric
+year <- 2019
+quarters <- 1:4
+type <- "Electric"
+
+pge_19_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_19_elec <- rbind(pge_19_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_19_elec, "pge_19_elec.rds")
+}
+```
+
+```{r}
+# 2018 Electric
+year <- 2018
+quarters <- 1:4
+type <- "Electric"
+
+pge_18_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_18_elec <- rbind(pge_18_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_18_elec, "pge_18_elec.rds")
+}
+```
+
+```{r}
+# 2017 Electric
+year <- 2017
+quarters <- 1:4
+type <- "Electric"
+
+pge_17_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_17_elec <- rbind(pge_17_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_17_elec, "pge_17_elec.rds")
+}
+```
+
+```{r}
+# 2021 Gas
+year <- 2021
+quarters <- 1:2
+type <- "Gas"
+
+pge_21_gas <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_21_gas <- rbind(pge_21_gas,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_21_gas, "pge_21_gas.rds")
+}
+```
+
+```{r}
+# 2020 Gas
+year <- 2020
+quarters <- 1:4
+type <- "Gas"
+
+pge_20_gas <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_20_gas <- rbind(pge_20_gas,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_20_gas, "pge_20_gas.rds")
+}
+```
+
+```{r}
+# 2019 Gas
+year <- 2019
+quarters <- 1:4
+type <- "Gas"
+
+pge_19_gas <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_19_gas <- rbind(pge_19_gas,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_19_gas, "pge_19_gas.rds")
+}
+```
+
+```{r}
+#2018 Gas
+year <- 2018
+quarters <- 1:4
+type <- "Gas"
+
+pge_18_gas <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_18_gas <- rbind(pge_18_gas,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_18_gas, "pge_18_gas.rds")
+}
+```
+
+```{r}
+# 2017 Gas
+year <- 2017
+quarters <- 1:4
+type <- "Gas"
+
+pge_17_gas <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PG&E/PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_17_gas <- rbind(pge_17_gas,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_17_gas, "pge_17_gas.rds")
+}
+```
+
+## Creating dataframes with all years' data combined (for easier graphing manip)
+```{r}
+pge_elec_all <- rbind(pge_17_elec, 
+                      pge_18_elec, 
+                      pge_19_elec, 
+                      pge_20_elec, 
+                      pge_21_elec)
+
+pge_elec_all
+
+pge_gas_all <- rbind(pge_17_gas,
+                     pge_18_gas,
+                     pge_19_gas,
+                     pge_20_gas,
+                     pge_21_gas)
+
+pge_gas_all
+```
+
+## Simplifying two aggregated dataframes via piped example template in Ch 1.7
+```{r}
+pge_elec_final <-
+  pge_elec_all %>% 
+  filter(
+    CUSTOMERCLASS %in% 
+      c(
+        "Elec- Residential",
+        "Elec- Commercial"
+      )
+  ) %>% 
+  select(
+    -c(COMBINED, AVERAGEKWH)
+  ) %>% 
+  group_by(YEAR, MONTH, CUSTOMERCLASS) %>% 
+  summarize(
+    TOTALKWH = 
+      sum(
+        TOTALKWH, 
+        na.rm = T
+      ),
+    TOTALCUSTOMERS =
+      sum(
+        TOTALCUSTOMERS,
+        na.rm = T
+      )
+  ) %>% 
+  mutate(
+    AVERAGEKWH =
+      TOTALKWH/TOTALCUSTOMERS
+  )
+
+pge_elec_final
+```
+
+```{r}
+pge_gas_final <-
+  pge_gas_all %>% 
+  filter(
+    CUSTOMERCLASS %in% 
+      c(
+        "Gas- Residential",
+        "Gas- Commercial"
+      )
+  ) %>% 
+  select(
+    -c(COMBINED, AVERAGETHM)
+  ) %>% 
+  group_by(YEAR, MONTH, CUSTOMERCLASS) %>% 
+  summarize(
+    TOTALTHM = 
+      sum(
+        TOTALTHM, 
+        na.rm = T
+      ),
+    TOTALCUSTOMERS =
+      sum(
+        TOTALCUSTOMERS,
+        na.rm = T
+      )
+  ) %>% 
+  mutate(
+    AVERAGETHM =
+      TOTALTHM/TOTALCUSTOMERS
+  )
+
+pge_gas_final
+```
+
+## Concatenating month & year columns (for easier graphing manip)
+```{r}
+pge_elec_final$DATE <- as.Date(
+                          paste(
+                            pge_elec_final$YEAR, 
+                            pge_elec_final$MONTH, 
+                            "01",
+                            sep = "-")
+                        )
+
+pge_gas_final$DATE <- as.Date(
+                          paste(
+                            pge_gas_final$YEAR, 
+                            pge_gas_final$MONTH, 
+                            "01",
+                            sep = "-")
+                        )
+
+```
+
+## Converting gas & electric to universal units
+```{r}
+pge_elec_final$TOTALKBTU <- pge_elec_final$TOTALKWH * 3.412
+# 3.412 is the multiplier for a conversion from KWH to kBTU
+# Source: https://sciencing.com/calculate-kilowatt-hours-4902973.html
+
+pge_gas_final$TOTALKBTU <- pge_gas_final$TOTALTHM * 100
+# 100 is the approx. multiplier for a convesion from therms to kBTU
+# Source: https://sciencing.com/convert-ccf-mmbtu-2825.html
+```
+
+## Filtering remaining dataframes by customer type
+```{r}
+pge_elec_residential <- filter(
+                          pge_elec_final, 
+                          CUSTOMERCLASS == "Elec- Residential")
+pge_elec_commercial <- filter(
+                          pge_elec_final, 
+                          CUSTOMERCLASS == "Elec- Commercial")
+
+pge_gas_residential <- filter(
+                          pge_gas_final, 
+                          CUSTOMERCLASS == "Gas- Residential")
+pge_gas_commercial <- filter(
+                          pge_gas_final, 
+                          CUSTOMERCLASS == "Gas- Commercial")
+```
+
+## Creating plots for Residential Gas & Electric (2017 - present)
+```{r}
+pge_res_chart <- 
+    ggplot() +
+    geom_line(
+      aes(
+       x = pge_elec_residential$DATE,
+       y = pge_elec_residential$TOTALKBTU,
+       fill = pge_elec_residential$CUSTOMERCLASS
+     ),
+     stat = "identity",
+     position = "stack",
+     color = "purple"
+   ) +
+    geom_line(
+      aes(
+       x = pge_gas_residential$DATE,
+       y = pge_gas_residential$TOTALKBTU,
+       fill = pge_gas_residential$CUSTOMERCLASS
+     ),
+     stat = "identity",
+     position = "stack",
+     color = "orange"
+    ) +
+    labs(
+      x = "Month",
+      y = "KBTU",
+       title = "PG&E Territory Monthly Residential Gas & Electricity Usage 
+      2017-Present (in kBTUs)",
+      fill = "Customer Type"
+  )
+
+pge_res_chart %>% ggplotly()
+```
+
+## Creating plots for Commercial Gas & Electric (2017 - present)
+```{r}
+pge_comm_chart <- 
+    ggplot() +
+    geom_line(
+      aes(
+       x = pge_elec_commercial$DATE,
+       y = pge_elec_commercial$TOTALKBTU,
+       fill = pge_elec_commercial$CUSTOMERCLASS
+     ),
+     stat = "identity",
+     position = "stack",
+     color = "purple"
+   ) +
+    geom_line(
+      aes(
+       x = pge_gas_commercial$DATE,
+       y = pge_gas_commercial$TOTALKBTU,
+       fill = pge_gas_commercial$CUSTOMERCLASS
+     ),
+     stat = "identity",
+     position = "stack",
+     color = "orange"
+    ) +
+    labs(
+      x = "Month",
+      y = "KBTU",
+       title = "PG&E Territory Monthly Commercial Gas & Electricity Usage 
+      2017-Present (in kBTUs)",
+      fill = "Customer Type"
+  )
+
+pge_comm_chart %>% ggplotly()
+```
+
+## Observations:
+
+### On residential customers:
+Electricity usage by residential customers appears to have increased since
+the onset of COVID. This can be explained by differences in patterns of behavior
+once moving indoors. However, this may not capture the entire picture of 
+electricity usage. The rise of Community Choice Aggregators (CCAs) within PG&E's 
+service territory has increased dramatically since 2018, taking away portions
+of PG&E's electricity load that would otherwise be represented.
+
+Gas usage seems to be within general trends (perhappps, slightly higher than usual),
+and with a marked anomaly around March 2020. 
+
+## On commercial customers:
+There is a significant decrease in electricity usage by commercial customers in 
+2020, presumably because of COVID. This is evident by the precipitous drop in 
+usage from March 2020 onwards. This trend continues until Q2 of 2021, where 
+usage begins to climb again.
+
+There is a slight decline in commercial gas usage in 2020, but not as dramatic
+as the change with electricity usage. Perhaps this discrepancy can once again
+be accounted for by the shifting of electric load to CCAs and away from PG&E 
+(CCAs do not sell gas).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

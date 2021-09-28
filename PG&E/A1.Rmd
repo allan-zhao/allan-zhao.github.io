@@ -1,0 +1,287 @@
+---
+title: "Assignment 1"
+author: "Allan Zhao"
+date: "9.28.2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loading tidyverse and plotly package through library() command
+```{r}
+library(tidyverse)
+library(plotly)
+```
+
+# Loading all PG&E data from CSVs
+```{r}
+## Loading 2021 files
+pge_21_q1_elec <- read_csv("PGE_2021_Q1_ElectricUsageByZip.csv")
+pge_21_q2_elec <- read_csv("PGE_2021_Q2_ElectricUsageByZip.csv")
+
+## Loading 2020 files
+pge_20_q1_elec <- read_csv("PGE_2020_Q1_ElectricUsageByZip.csv")
+pge_20_q2_elec <- read_csv("PGE_2020_Q2_ElectricUsageByZip.csv")
+pge_20_q3_elec <- read_csv("PGE_2020_Q3_ElectricUsageByZip.csv")
+pge_20_q4_elec <- read_csv("PGE_2020_Q4_ElectricUsageByZip.csv")
+
+## Loading 2019 files
+pge_19_q1_elec <- read_csv("PGE_2019_Q1_ElectricUsageByZip.csv")
+pge_19_q2_elec <- read_csv("PGE_2019_Q2_ElectricUsageByZip.csv")
+pge_19_q3_elec <- read_csv("PGE_2019_Q3_ElectricUsageByZip.csv")
+pge_19_q4_elec <- read_csv("PGE_2019_Q4_ElectricUsageByZip.csv")
+
+## Loading 2018 files
+pge_18_q1_elec <- read_csv("PGE_2018_Q1_ElectricUsageByZip.csv")
+pge_18_q2_elec <- read_csv("PGE_2018_Q2_ElectricUsageByZip.csv")
+pge_18_q3_elec <- read_csv("PGE_2018_Q3_ElectricUsageByZip.csv")
+pge_18_q4_elec <- read_csv("PGE_2018_Q4_ElectricUsageByZip.csv")
+
+## Loading 2017 files
+pge_17_q1_elec <- read_csv("PGE_2017_Q1_ElectricUsageByZip.csv")
+pge_17_q2_elec <- read_csv("PGE_2017_Q2_ElectricUsageByZip.csv")
+pge_17_q3_elec <- read_csv("PGE_2017_Q3_ElectricUsageByZip.csv")
+pge_17_q4_elec <- read_csv("PGE_2017_Q4_ElectricUsageByZip.csv")
+
+```
+
+# Saving 2021 data into RDS file by year
+```{r}
+year <- 2021
+quarters <- 1:2
+type <- "Electric"
+
+pge_21_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_21_elec <- rbind(pge_21_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_21_elec, "pge_21_elec.rds")
+}
+```
+
+# Saving 2020 data into RDS file by year
+```{r}
+year <- 2020
+quarters <- 1:4
+type <- "Electric"
+
+pge_20_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_20_elec <- rbind(pge_20_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_20_elec, "pge_20_elec.rds")
+}
+```
+
+# Saving 2019 data into RDS file by year
+```{r}
+year <- 2019
+quarters <- 1:4
+type <- "Electric"
+
+pge_19_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_19_elec <- rbind(pge_19_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_19_elec, "pge_19_elec.rds")
+}
+```
+
+# Saving 2018 data into RDS file by year
+```{r}
+year <- 2018
+quarters <- 1:4
+type <- "Electric"
+
+pge_18_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_18_elec <- rbind(pge_18_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_18_elec, "pge_18_elec.rds")
+}
+```
+
+# Saving 2017 data into RDS file by year
+```{r}
+year <- 2017
+quarters <- 1:4
+type <- "Electric"
+
+pge_17_elec <- NULL
+
+for(quarter in quarters) {
+  
+  filename <- 
+    paste0(
+      "PGE_",
+      year,
+      "_Q",
+      quarter,
+      "_",
+      type,
+      "UsageByZip.csv"
+    )
+
+  print(filename)
+  
+  temp <- read_csv(filename)
+  
+  pge_17_elec <- rbind(pge_17_elec,temp)
+  # Note rbind requires field names to be consistent for every new thing that you add.
+
+  saveRDS(pge_17_elec, "pge_17_elec.rds")
+}
+```
+
+# Creating dataframe with all years' data combined
+```{r}
+pge_all_years <- rbind(pge_17_elec, 
+                       pge_18_elec, 
+                       pge_19_elec, 
+                       pge_20_elec, 
+                       pge_21_elec)
+
+pge_all_years
+```
+
+# Simplifying pge_all_years via piped example template in Ch 1.7
+```{r}
+pge_final <-
+  pge_all_years %>% 
+  filter(
+    CUSTOMERCLASS %in% 
+      c(
+        "Elec- Residential",
+        "Elec- Commercial"
+      )
+  ) %>% 
+  select(
+    -c(COMBINED, AVERAGEKWH)
+  ) %>% 
+  group_by(YEAR, MONTH, CUSTOMERCLASS) %>% 
+  summarize(
+    TOTALKWH = 
+      sum(
+        TOTALKWH, 
+        na.rm = T
+      ),
+    TOTALCUSTOMERS =
+      sum(
+        TOTALCUSTOMERS,
+        na.rm = T
+      )
+  ) %>% 
+  mutate(
+    AVERAGEKWH =
+      TOTALKWH/TOTALCUSTOMERS
+  )
+
+pge_final
+```
+
+# Separating pge_all_years into two dataframes based on customer class
+```{r}
+pge_residential <- filter(pge_final, CUSTOMERCLASS == "Elec- Residential")
+
+pge_commercial <- filter(pge_final, CUSTOMERCLASS == "Elec- Commercial")
+```
+
+```{r}
+pge_res_chart <- 
+    pge_residential %>%
+    ggplot() +
+    geom_bar(
+      aes(
+       x = YEAR %>% factor(),
+       y = TOTALKWH,
+       fill = CUSTOMERCLASS
+     ),
+     stat = "identity",
+     position = "stack"
+   ) +
+    labs(
+      x = "Year",
+      y = "kWh",
+       title = "PG&E Territory Yearly Electricity Usage, 2017-Present",
+      fill = "Electricity Type"
+  )
+
+pge_res_chart %>% ggplotly()
+
+pge_res_chart
+```
+
