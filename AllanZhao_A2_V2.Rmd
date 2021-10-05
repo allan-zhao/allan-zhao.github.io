@@ -1,0 +1,130 @@
+---
+title: "AllanZhao_A2_V2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, messaage = F)
+
+library(tidyverse)
+library(sf)
+library(mapview)
+library(censusapi)
+library(tigris)
+library(s2)
+library(leaflet)
+```
+
+```{r}
+Sys.setenv(CENSUS_KEY="eb8ddadea31c0afe47f0aa2e05a42c91a84439fe")
+```
+
+## SHOWING GENERAL POPULATION TRENDS (2010-2020)
+### Importing 2010 and 2020 census population data.
+```{r}
+scc_pop_2020 <-
+  getCensus(
+    name = "dec/pl",
+    vintage = 2020,
+    region = "block:*", 
+    regionin = "state:06+county:085",
+    vars = "P1_001N"
+  ) %>% 
+  transmute(
+    GEOID20 =
+      paste0(state,county,tract,block),
+    pop20 = P1_001N
+  )
+
+scc_pop_2020$pop20 <- as.numeric(scc_pop_2020$pop20)
+
+
+scc_pop_2010 <-
+  getCensus(
+    name = "dec/pl",
+    vintage = 2010,
+    region = "block:*", 
+    regionin = "state:06+county:085",
+    vars = "P003001"
+  ) %>% 
+  transmute(
+    GEOID10 = paste0(state,county,tract,block),
+    pop10 = P003001
+  )
+
+scc_pop_2010$pop10 <- as.numeric(scc_pop_2010$pop10)
+```
+
+### Importing block level data for Santa Clara County.
+```{r}
+scc_blocks_2020 <- blocks("CA", "Santa Clara", year = 2020, progress_bar = F)
+scc_blocks_2010 <- blocks("CA", "Santa Clara", year = 2010, progress_bar = F)
+
+scc_pop_blocks <- scc_blocks_2020 %>% 
+  select(GEOID20 = GEOID20) %>% 
+  left_join(scc_pop_2020) %>%
+  left_join(scc_pop_2010 %>% select(GEOID20 = GEOID10))
+```
+
+### Preliminary map
+```{r}
+mlpts_boundary <- places("CA", progress_bar = F) %>% 
+  filter(NAME == "Milpitas")
+
+mlpts_blocks_2010 <- scc_blocks_2010 %>% 
+  left_join(scc_pop_2020 %>% select(GEOID10 = GEOID20)) %>% 
+  st_as_sf() %>% 
+  st_centroid() %>% 
+  .[mlpts_boundary, ] %>% 
+  left_join(scc_pop_2010) %>% 
+  st_as_sf()
+
+mapview(mlpts_blocks_2010) + mapview(mlpts_boundary, alpha.regions = 0, color = "red", lwd = 2)
+```
+
+## INTERSECTIONS
+### Intersection setup.
+```{r}
+mlpts_blocks_2020 <- scc_pop_blocks %>%
+  .[mlpts_boundary, ]
+```
+
+### Intersection work. [NEEDS WORK]
+```{r}
+#mlpts_blocks_2020_intersect <- mlpts_blocks_2020 %>% 
+#  st_transform(26910) %>% 
+#  mutate(original_area = st_area(.)) %>% 
+#  st_intersection(
+#    scc_blocks_2010 %>%
+#      select(GEOID10 = geometry)
+#  ) %>% 
+#  mutate(
+#    leftover_area = st_area(.),
+#    perc_area = as.numeric(leftover_area/original_area) * 43560,
+#    pop_2020 = pop20 * perc_area
+#  )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
